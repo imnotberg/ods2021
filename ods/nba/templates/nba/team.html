@@ -1,0 +1,64 @@
+<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script></head>
+<table>
+	<tr>
+		<th>NAME</th>
+		<td id="name"></td>
+	</tr>
+	<tr>
+		<th>ASSISTS</th>
+		<td id="assists"></td>
+	</tr>
+	<tr>
+		<th>BLOCKS</th>
+		<td id="blocks"></td>
+	</tr>
+</table>
+<table id="schedule">
+	<thead>
+		<tr>
+			<th>DATE</th>
+			<th>OPP</th>
+			<th>SCORE</th>
+			<th>RESULT</th>
+		</tr>
+	</thead>
+	<tbody>
+		
+	</tbody>
+</table>
+<script type="text/javascript">
+	function writeTeam(){
+		let year = "{{year}}"
+		let team_id = "{{team_id}}"
+		fetch("{% url 'nba:team_feed' team_id='CHI' year=987654321 %}".replace(/987654321/,year.toString()).replace('CHI',team_id)).then(function(response){
+			return response.json();
+		}).then(function(data){
+			let info = JSON.parse(data.info);
+			$('#name').prepend(`${info[0]["abbreviation"]||""}`);
+			$('#assists').prepend(`${info[0]["assists"]||""}`);
+			$('#blocks').prepend(`${info[0]["blocks"]||""}`);
+			let schedule = JSON.parse(data.schedule);
+			console.log(schedule[0]);
+			var s;
+			for(s=0; s < schedule.length; s++){
+				let boxscoreIndex = schedule[s]["boxscore_index"];
+				let oppAbbr = schedule[s]["opponent_abbr"];
+				console.log(oppAbbr);
+				let gameUrl = "{% url 'nba:game' year=2011 boxscore_index='201304220BRK' %}".replace(/2011/,year.toString()).replace('201304220BRK',boxscoreIndex.toString());
+				let oppUrl = "{% url 'nba:team' year=2011 team_id='XXX' %}".replace(/2011/,year.toString()).replace('XXX',oppAbbr.toString());
+				console.log(oppUrl);				
+				$('#schedule tbody').append(
+						`<tr>
+						<td><a href="${gameUrl||""}">${schedule[s]["date"]||""}</td>
+						<td><a href="${oppUrl||""}">${schedule[s]["opponent_abbr"]||""}</a></td>
+						<td><a href="${gameUrl||""}">${schedule[s]["points_scored"]||""}-${schedule[s]["points_allowed"]||""}</a></td>
+						<td>${schedule[s]["wins"]||""}-${schedule[s]["losses"]||""}</td>
+						</tr>`
+					)
+			}
+		});
+
+
+	}
+	document.addEventListener('DOMContentLoaded', writeTeam);
+</script>

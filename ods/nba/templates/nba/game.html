@@ -1,0 +1,71 @@
+{% extends 'nba/base.html' %}
+{% block content %}
+<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script></head>
+
+<div class="d-flex justify-content-center">
+	<table>
+		<thead>
+			<tr>
+				<th><h3>AWAY</h3></th>
+				<th><h3>HOME</h3></th>
+			</tr>
+			<tr>
+				<td id="away-name"></td>
+				<td id="home-name"></td>
+			</tr>
+			<tr>
+				<td id="away-score"></td>
+				<td id="home-score"></td>
+				<td id="odds"></td>
+			</tr>
+		</thead>
+	</table>
+	<table id="away-stats">
+		<tbody>
+			
+		</tbody>
+	</table>
+
+</div>
+
+<script type="text/javascript">
+	function writeGame(){
+		let boxscoreIndex = "{{boxscore_index}}";
+		let year = "{{year}}";
+		let gameUrl = "{% url 'nba:game_feed' year=2011 boxscore_index='201411170LAC' %}".replace(/2011/,year.toString()).replace('201411170LAC',boxscoreIndex.toString());
+		fetch(gameUrl).then(function(response){
+			return(response.json());
+		}).then(function(data){
+			let info = data;
+			let boxscore = JSON.parse(data["boxscore"]);
+			let gameInfo = JSON.parse(data["info"]);
+			let away_players = JSON.parse(data["away_players"]);
+			let home_players = data["home_players"];
+			let awayTeam = gameInfo["_away_name"];
+			let homeTeam = gameInfo["_home_name"];
+			$("#away-name").prepend(`<h5>${gameInfo["_away_name"]||""}</h5>`);
+			$("#home-name").prepend(`<h5>${gameInfo["_home_name"]||""}</h5>`);
+			$("#away-score").prepend(`${gameInfo["_away_points"]||""}`);
+			$("#home-score").prepend(`${gameInfo["_home_points"]||""}`);
+			let gameOdds = data["odds"];
+			findGameOdds(gameOdds,awayTeam,homeTeam);
+
+		});
+	}
+	function writeTeamStats(awayStats,homeStats){
+
+	}
+	function findGameOdds(odds,awayTeam,homeTeam){
+		for(var x of Object.keys(odds)){
+			if(odds[x]["away_team"].includes(awayTeam)||odds[x]["home_team"].includes(homeTeam)){
+				console.log('yes');
+				var thisGameOdds = odds[x]["odds"];
+				$("#odds").prepend(`<h5>${thisGameOdds}</h5>`);
+			}
+		}
+		
+	}
+	document.addEventListener('DOMContentLoaded', writeGame);
+</script>
+
+{% endblock %}
