@@ -44,10 +44,21 @@ def team(request,team_id,year=datetime.now()):
 	return render(request,'nba/team.html',context)
 
 def game_feed(request,year,boxscore_index):
-	team_abbr = re.findall('([A-Z]+)',boxscore_index)[0]
-	year = boxscore_index[0:4]
-	team_sched = Schedule(team_abbr,year)
+	teams = Teams(year)
+	home_abbr = re.findall('([A-Z]+)',boxscore_index)[0]		
+	home_sched = Schedule(home_abbr,year)
+	home_gm = [t for t in home_sched if t.boxscore_index==boxscore_index][0].__dict__
+	road_abbr = home_gm["_opponent_abbr"]
+	road_tm = teams[road_abbr]
+	road_sched = Schedule(road_abbr,year)
+	home_sched_df = home_sched.dataframe
+	road_sched_df = road_sched.dataframe
+	road_gm = [t for t in road_sched if t.boxscore_index == boxscore_index][0].__dict__
+	home_tm = teams[home_abbr].__dict__
+	road_tm = teams[road_abbr].__dict__		
 	date = datetime.strptime(boxscore_index[0:8],"%Y%m%d").strftime("%Y-%m-%d")
+	road_record = road_sched_df[road_sched_df.datetime<datetime.strptime(date,"%Y-%m-%d")].to_json(orient="records")
+	home_record = road_sched_df[road_sched_df.datetime<datetime.strptime(date,"%Y-%m-%d")].to_json(orient="records")
 	url = f"https://www.covers.com/sports/nba/matchups?selectedDate={date}"
 	page = requests.get(url)
 	tree = html.fromstring(page.text)
@@ -59,13 +70,13 @@ def game_feed(request,year,boxscore_index):
 		away_players = pd.concat([df.from_dict(p.__dict__,orient="index").T for p in game.away_players]).to_json(orient="records")
 		home_players = pd.concat([df.from_dict(p.__dict__,orient="index").T for p in game.home_players]).to_json(orient="records")
 	except:
-		away_players = {}
-		home_players = {}
-		game = {}
-		boxscore = {}
+		away_players = None
+		home_players = None
+		game = None
+		boxscore = None
 	
 
-	return JsonResponse({"boxscore":boxscore,"away_players":away_players,"home_players":home_players,"info":info,"odds":odds_dict,},safe=False)
+	return JsonResponse({"boxscore":boxscore,"away_players":away_players,"home_players":home_players,"info":info,"odds":odds_dict,"road_tm":road_tm,"home_tm":home_tm,"road_sched":road_sched.dataframe.to_json(orient="records"),"home_sched":home_sched.dataframe.to_json(orient="records"),"road_record":road_record,"home_record":home_record,"home_gm":home_gm,"road_gm":road_gm,},safe=False)
 
 def game(request,year,boxscore_index):
 	context = {'year':year,'boxscore_index':boxscore_index}
