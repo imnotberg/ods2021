@@ -15,6 +15,12 @@ def extract_html(value):
 		return value.text()
 	except:
 		return value
+
+def get_value(value):
+	try:
+		return value[0]
+	except:
+		return None
 def index(request):
 	context = {}
 
@@ -82,3 +88,27 @@ def game(request,year,boxscore_index):
 	context = {'year':year,'boxscore_index':boxscore_index}
 
 	return render(request,'nba/game.html',context)
+
+def date_feed(request,date_id):
+	year = date_id[0:4]
+	month = datetime.strptime(date_id,"%Y%m%d").strftime("%B").lower()
+	url = f"https://www.basketball-reference.com/leagues/NBA_{year}_games-{month}.html"
+	page = requests.get(url)
+	tree = html.fromstring(page.text)	
+	feed = {get_value(t.xpath('.//th[@data-stat="date_game"]/@csk')):{"game_id":get_value(t.xpath('.//th/@csk')),"road_team":get_value(t.xpath('.//td[@data-stat="visitor_team_name"]//a/text()')),"road_points":get_value(t.xpath('.//td[@data-stat="visitor_pts"]/text()')),"home_team":get_value(t.xpath('.//td[@data-stat="home_team_name"]//a/text()')),"home_points":get_value(t.xpath('.//td[@data-stat="home_pts"]/text()'))} for t in tree.xpath('//table[@id="schedule"]//tbody//tr')} 
+	games = {game:game_info for game,game_info in feed.items() if date_id in game}
+	context = {"games":games,}
+	return JsonResponse(context,safe=False)
+
+def schedule_day(request,date_id):
+	year = date_id[0:4]
+	month = datetime.strptime(date_id,"%Y%m%d").strftime("%B").lower()
+	url = f"https://www.basketball-reference.com/leagues/NBA_{year}_games-{month}.html"
+	page = requests.get(url)
+	tree = html.fromstring(page.text)	
+	feed = {get_value(t.xpath('.//th[@data-stat="date_game"]/@csk')):{"game_id":get_value(t.xpath('.//th/@csk')),"road_team":get_value(t.xpath('.//td[@data-stat="visitor_team_name"]//a/text()')),"road_points":get_value(t.xpath('.//td[@data-stat="visitor_pts"]/text()')),"home_team":get_value(t.xpath('.//td[@data-stat="home_team_name"]//a/text()')),"home_points":get_value(t.xpath('.//td[@data-stat="home_pts"]/text()'))} for t in tree.xpath('//table[@id="schedule"]//tbody//tr')} 
+	games = df.from_dict({game:game_info for game,game_info in feed.items() if date_id in game},orient='index')
+	context = {"games":games,"year":year,}
+	return render(request,'nba/schedule.html',context)
+
+
