@@ -1,0 +1,42 @@
+<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script></head>
+<table id="teams">
+	<thead>
+		<tr>
+			<th>NAME</th>
+			<th>RANK</th>
+		</tr>
+	</thead>
+	<tbody>
+		
+	</tbody>
+</table>
+
+<script type="text/javascript">
+	function writeTeams(){
+		let year = "{{year}}"
+		fetch("{% url 'mlb:teams_feed' 987654321 %}".replace(/987654321/,year.toString())).then(function(response){
+			return response.json();
+		}).then(function(data){
+			let teams = JSON.parse(data);
+			var i;
+			for(i=0; i < teams.length; i++){
+				let teamAbbv = teams[i]["abbreviation"];
+				console.log(year);
+				console.log(teamAbbv);
+				let teamUrl = "{% url 'mlb:team' team_id='CHI' year=2021 %}".replace('CHI',teamAbbv.toString()).replace('2021',year.toString());
+				console.log(teamUrl);
+				
+				$('#teams').append(
+					`
+					<tr>
+						<td><a href="${teamUrl||""}">${teams[i]["abbreviation"]||""}</td>
+						<td>${teams[i]["rank"]||""}</td>
+					</tr>
+					`
+					)
+			}
+		});
+
+	}
+	document.addEventListener('DOMContentLoaded', writeTeams);
+</script>

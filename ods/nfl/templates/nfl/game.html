@@ -1,0 +1,151 @@
+{% extends 'nba/base.html' %}
+{% block content %}
+<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script></head>
+
+<div class="d-flex justify-content-center">
+	<table id="game-details">
+		<thead>
+			<tr>
+				<th><h3>AWAY</h3></th>
+				<th><h3>HOME</h3></th>
+			</tr>
+			<tr>
+				<td id="away-name"></td>
+				<td id="home-name"></td>
+			</tr>
+			<tr>
+				<td id="away-score"></td>
+				<td id="home-score"></td>				
+			</tr>
+			<tr>
+				<td id="game-date"></td>
+				<td id="game-time"></td>
+			</tr>
+
+			<tr>
+				<td id="odds"></td>
+				<td id="total"></td>
+			</tr>
+
+		</thead>
+	</table>
+	<table id="away-stats">
+		<tbody>
+			
+		</tbody>
+	</table>
+
+</div>
+<div class="row">
+	<div class="col-sm-6">
+		<div class="table-responsive">
+			<table class="table table-sm table-hover" id="away-players-table">
+				<thead>
+					<tr>
+						<th>NAME</th>
+						<th>MINUTES</th>
+						<th>POINTS</th>
+						<th>REBOUNDS</th>
+						<th>ASSISTS</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-sm-6">
+		<div class="table-responsive">
+			<table class="table table-sm table-hover" id="home-players-table">
+				<thead>
+					<tr>
+						<th>NAME</th>
+						<th>MINUTES</th>
+						<th>POINTS</th>
+						<th>REBOUNDS</th>
+						<th>ASSISTS</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+</div>
+
+<script type="text/javascript">
+	function writeGame(){
+		let boxscoreIndex = "{{boxscore_index}}";
+		let year = "{{year}}";
+		let gameUrl = "{% url 'nfl:game_feed' year=2011 boxscore_index='201411170LAC' %}".replace(/2011/,year.toString()).replace('201411170LAC',boxscoreIndex.toString());
+		fetch(gameUrl).then(function(response){
+			return(response.json());
+		}).then(function(data){
+			let info = data;
+			let boxscore = JSON.parse(data["boxscore"]);
+			let gameInfo = JSON.parse(data["info"]);
+			let homeGm = data["home_gm"];
+			console.log(homeGm);
+			let roadGm = data["road_gm"];
+			let away_players = JSON.parse(data["away_players"]);
+			let home_players = JSON.parse(data["home_players"]);
+			let awayTeam = gameInfo["_away_name"];
+			let homeTeam = gameInfo["_home_name"];
+			let awayTm = homeGm["_opponent_name"];
+			let homeTm = roadGm["_opponent_name"];
+			$("#away-name").prepend(`<h5>${gameInfo["_away_name"]||homeGm["_opponent_name"]||""}</h5>`);
+			$("#home-name").prepend(`<h5>${gameInfo["_home_name"]||roadGm["_opponent_name"]||""}</h5>`);
+			$("#away-score").prepend(`${gameInfo["_away_points"]||""}`);
+			$("#home-score").prepend(`${gameInfo["_home_points"]||""}`);
+			$("#game-date").prepend(`${homeGm["_date"]||roadGm["_date"]||""}`);
+			$("#game-time").prepend(`${homeGm["_time"]||roadGm["_time"]||""}`);	
+			let gameOdds = data["odds"];
+			console.log(gameOdds);
+			findGameOdds(gameOdds,awayTm,homeTm);
+			var a;
+			for(a=0;a<away_players.length;a++){
+				console.log(away_players[a]);
+				$("#away-players-table tbody").append(
+					`<tr>
+						<td>${away_players[a]["_name"]||"no name"}</td>
+						<td>${away_players[a]["_minutes_played"]||"0"}</td>
+						<td>${away_players[a]["_points"]||"0"}</td>
+						<td>${away_players[a]["_total_rebounds"]||"0"}</td>
+						<td>${away_players[a]["_assists"]||"0"}</td>
+					`
+					)
+			}
+			var h;
+			for(h=0;h<home_players.length;h++){
+				console.log(home_players[h]);
+				$("#home-players-table tbody").append(
+					`<tr>
+						<td>${home_players[h]["_name"]||"no name"}</td>
+						<td>${home_players[h]["_minutes_played"]||"0"}</td>
+						<td>${home_players[h]["_points"]||"0"}</td>
+						<td>${home_players[h]["_total_rebounds"]||"0"}</td>
+						<td>${home_players[h]["_assists"]||"0"}</td>
+					`
+					)
+			}
+
+		});
+	}
+	function writeTeamStats(awayStats,homeStats){
+
+	}
+	function findGameOdds(odds,awayTeam,homeTeam){
+
+		for(var x of Object.keys(odds)){
+			if(odds[x]["away_team"].includes(awayTeam)||odds[x]["home_team"].includes(homeTeam)){				
+				var thisGameOdds = odds[x]["odds"];
+				console.log('this game Odds');
+				console.log(thisGameOdds);
+				var thisGameTotal = odds[x]["total"];
+				$("#odds").prepend(`<h5>${thisGameOdds}</h5>`);
+				$("#total").prepend(`<h5>${thisGameTotal}</h5>`);
+			}
+		}
+		
+	}
+	document.addEventListener('DOMContentLoaded', writeGame);
+</script>
+
+{% endblock %}

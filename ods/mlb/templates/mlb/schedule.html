@@ -1,0 +1,27 @@
+{% extends 'nba/base.html' %}
+
+{% block content %}
+<div class="table-responsive">
+	<table class="table table-sm table-hover">
+		<thead>
+			<tr>
+				<th>GAME</th>
+				<th>ROAD TEAM</th>
+				<th>SCORE</th>
+				<th>HOME TEAM</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for game,game_info in games.iterrows %}
+			<tr>
+				<td><a href="{% url 'mlb:game' year=year boxscore_index=game %}">{{game}}</a></td>
+				<td><a href="">{{game_info.road_team}}</a></td>
+				<td>{{game_info.road_points|default_if_none:""}}-{{game_info.home_points|default_if_none:""}}</td>
+				<td><a href="">{{game_info.home_team}}</a></td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+{% endblock %}
