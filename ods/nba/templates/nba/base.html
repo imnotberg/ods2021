@@ -1,4 +1,168 @@
+<style type="text/css">
+	$color1: #8AB1AA;
+$color2: #5EACC2;
+$color3: #1F81AF;
+$color4: #4B4452;
+$color5: #46404f;
+$color6: #746f7f;
 
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: radial-gradient(circle, $color1 40%, $color2, $color3);
+  font-family: Oxygen, sans-serif;
+}
+
+.scoreboard {
+  width: 350px;
+  height: 150px;
+  border-radius: 20px;
+  background: linear-gradient(-60deg, $color5 53%, $color4 53%);
+  box-shadow: 2px 3px 5px 0px rgba(0,0,0,0.25);
+}
+
+.team {
+  width: 100%;
+  height: 50%;
+  display: flex;
+  align-items: center;
+  font-size: 20pt;
+  color: white;
+  
+  .name {
+    flex-shrink: 0;
+    width: 52px;
+    display: flex;
+    justify-content: center;
+    letter-spacing: 2px;
+  }
+  
+  &:nth-child(1) {
+    .rank {
+      border-top-left-radius: 20px;
+    }
+  }
+  
+  &:nth-child(3) {
+    .rank {
+      border-bottom-left-radius: 20px;
+    }
+  }
+  
+  .rank {
+    height: 100%;
+    width: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16pt;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  
+  .logo {
+    width: 50px;
+    margin: 25px;
+  }
+  
+  .score {
+    flex-shrink: 0;
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    margin: 30px;
+    letter-spacing: 2px;
+  }
+  
+  .record {
+    font-size: 16pt;
+    color: $color6;
+    padding: 1px;
+    margin-right: 30px;
+  }
+}
+
+.divider {
+  &::before {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    height: 1px;
+    width: 180px;
+    background-color: $color6;
+  }
+  
+  &::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    height: 1px;
+    width: 80px;
+    right: 0;
+    top: 0;
+    background-color: $color6;
+  }
+  
+  p {
+    position: absolute;
+    font-weight: bold;
+    left: 187px;
+    top: -6px;
+  }
+  
+  height: 1px;
+  width: 310px;
+  position: absolute;
+  margin-left: 40px;
+  font-size: 10pt;
+  color: white;
+}
+
+.gsw {
+  $team-color: #EABF4F;
+  .rank {
+    background-color: $team-color;
+    color: $color4;
+  }
+  &.win {
+    .score {
+      color: $team-color;
+    }
+    .record {
+      color: white;
+      border-bottom: 2px solid $team-color;
+    }
+  }
+}
+
+.utc {
+  $team-color: #072242;
+  .rank {
+    background-color: $team-color;
+  }
+  &.win {
+    .score {
+      color: $team-color;
+    }
+    .record {
+      color: white;
+      border-bottom: 2px solid $team-color;
+    }
+  }
+}
+
+.subtitle {
+  margin: 20px;
+  color: #31283C;
+}
+
+b {
+  font-weight: bold;
+}
+</style>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

@@ -8,6 +8,7 @@ from pandas import DataFrame as df
 import json,requests,re
 from lxml import html
 from datetime import datetime
+from .utils import *
 
 # Create your views here.
 def extract_html(value):
@@ -49,10 +50,16 @@ def team(request,team_id,year=datetime.now()):
 	
 	return render(request,'mlb/team.html',context)
 
-def game_feed(request,year,boxscore_index):
+def game_feed(request,year,team_abbr,boxscore_index):
+
+	if team_abbr in MLB_TEAMS_ABBR_CHANGES.values():
+		data_team_abbr = [k for k,v in MLB_TEAMS_ABBR_CHANGES.items() if v==team_abbr][0]
+	else:
+		data_team_abbr = team_abbr
+	boxscore_index = f"{team_abbr}/{boxscore_index}"
 	teams = Teams(year)
-	home_abbr = re.findall('([A-Za-z]+)',boxscore_index)[0]		
-	home_sched = Schedule(home_abbr,year)
+	home_sched = Schedule(data_team_abbr,year)
+	home_abbr = data_team_abbr
 	home_gm = [t for t in home_sched if t.boxscore_index==boxscore_index][0].__dict__
 	road_abbr = home_gm["_opponent_abbr"]
 	road_tm = teams[road_abbr]
@@ -61,14 +68,17 @@ def game_feed(request,year,boxscore_index):
 	road_sched_df = road_sched.dataframe
 	road_gm = [t for t in road_sched if t.boxscore_index == boxscore_index][0].__dict__
 	home_tm = teams[home_abbr].__dict__
-	road_tm = teams[road_abbr].__dict__		
-	date = datetime.strptime(boxscore_index[0:8],"%Y%m%d").strftime("%Y-%m-%d")
+	road_tm = teams[road_abbr].__dict__	
+	date_numbers = re.findall('([0-9]+)',boxscore_index)[0]	
+	date = datetime.strptime(date_numbers,"%Y%m%d0").strftime("%Y-%m-%d")
 	road_record = road_sched_df[road_sched_df.datetime<datetime.strptime(date,"%Y-%m-%d")].to_json(orient="records")
 	home_record = road_sched_df[road_sched_df.datetime<datetime.strptime(date,"%Y-%m-%d")].to_json(orient="records")
 	url = f"https://www.covers.com/sports/mlb/matchups?selectedDate={date}"
+	print(url,'URL')
 	page = requests.get(url)
 	tree = html.fromstring(page.text)
-	odds_dict = {g.xpath('./@data-event-id')[0]:{"away_team":f"{g.xpath('./@data-away-team-fullname-search')[0]} {g.xpath('./@data-away-team-nickname-search')[0]}" ,"home_team":f"{g.xpath('./@data-home-team-fullname-search')[0]} {g.xpath('./@data-home-team-nickname-search')[0]}","odds":g.xpath('./@data-game-odd')[0],"total":g.xpath('./@data-game-total')[0],} for g in tree.xpath('//div[@class="cmg_matchup_game_box cmg_game_data"]')}
+	odds_dict = {g.xpath('./@data-event-id')[0]:{"datetime":get_value(g.xpath('./@data-game-date')),"away_team":f"{g.xpath('./@data-away-team-city-search')[0]} {g.xpath('./@data-away-team-nickname-search')[0]}" ,"home_team":f"{g.xpath('./@data-home-team-city-search')[0]} {g.xpath('./@data-home-team-nickname-search')[0]}","odds":g.xpath('./@data-game-odd')[0],} for g in tree.xpath('//div[@class="cmg_matchup_game_box cmg_game_data"]') + tree.xpath('//div[@class="cmg_matchup_game_box  cmg_game_data"]')}
+	print(odds_dict)
 	try:	
 		game = Boxscore(boxscore_index)
 		info = json.dumps({k:extract_html(v) for k,v in game.__dict__.items() if 'players' not in k})
@@ -84,8 +94,8 @@ def game_feed(request,year,boxscore_index):
 
 	return JsonResponse({"boxscore":boxscore,"away_players":away_players,"home_players":home_players,"info":info,"odds":odds_dict,"road_tm":road_tm,"home_tm":home_tm,"road_sched":road_sched.dataframe.to_json(orient="records"),"home_sched":home_sched.dataframe.to_json(orient="records"),"road_record":road_record,"home_record":home_record,"home_gm":home_gm,"road_gm":road_gm,},safe=False)
 
-def game(request,year,boxscore_index):
-	context = {'year':year,'boxscore_index':boxscore_index}
+def game(request,year,team_id,boxscore_index):
+	context = {'year':year,'boxscore_index':boxscore_index,"team_id":team_id,}
 
 	return render(request,'mlb/game.html',context)
 

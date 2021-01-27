@@ -30,29 +30,33 @@
 	function writeTeam(){
 		let year = "{{year}}"
 		let team_id = "{{team_id}}"
+		
 		fetch("{% url 'mlb:team_feed' team_id='CHI' year=987654321 %}".replace(/987654321/,year.toString()).replace('CHI',team_id)).then(function(response){
 			return response.json();
 		}).then(function(data){
 			let info = JSON.parse(data.info);
-			$('#name').prepend(`${info[0]["abbreviation"]||""}`);
-			$('#assists').prepend(`${info[0]["assists"]||""}`);
-			$('#blocks').prepend(`${info[0]["blocks"]||""}`);
+			$('#name').prepend(`${info[0]["abbreviation"]||"0"}`);
+			$('#assists').prepend(`${info[0]["assists"]||"0"}`);
+			$('#blocks').prepend(`${info[0]["blocks"]||"0"}`);
 			let schedule = JSON.parse(data.schedule);
 			console.log(schedule[0]);
 			var s;
 			for(s=0; s < schedule.length; s++){
 				let boxscoreIndex = schedule[s]["boxscore_index"];
-				let oppAbbr = schedule[s]["opponent_abbr"];
-				console.log(oppAbbr);
-				let gameUrl = "{% url 'mlb:game' year=2011 boxscore_index='201304220BRK' %}".replace(/2011/,year.toString()).replace('201304220BRK',boxscoreIndex.toString());
+				let regex = "([^\/]+$)";
+				let regex2 = "([A-Z]{3})";
+				let match = boxscoreIndex.match(regex)[1];
+				let match2 = boxscoreIndex.match(regex2)[1];
+				let oppAbbr = schedule[s]["opponent_abbr"];				
+				let gameUrl = "{% url 'mlb:game' year=2011 team_id='XXX' boxscore_index='201304220BRK' %}".replace(/2011/,year.toString()).replace('201304220BRK',match.toString()).replace('XXX',match2.toString());
 				let oppUrl = "{% url 'mlb:team' year=2011 team_id='XXX' %}".replace(/2011/,year.toString()).replace('XXX',oppAbbr.toString());
 				console.log(oppUrl);				
 				$('#schedule tbody').append(
 						`<tr>
-						<td><a href="${gameUrl||""}">${schedule[s]["date"]||""}</td>
-						<td><a href="${oppUrl||""}">${schedule[s]["opponent_abbr"]||""}</a></td>
-						<td><a href="${gameUrl||""}">${schedule[s]["points_scored"]||""}-${schedule[s]["points_allowed"]||""}</a></td>
-						<td>${schedule[s]["wins"]||""}-${schedule[s]["losses"]||""}</td>
+						<td><a href="${gameUrl||""}">${schedule[s]["date"]||"0"}</td>
+						<td><a href="${oppUrl||""}">${schedule[s]["opponent_abbr"]||"0"}</a></td>
+						<td><a href="${gameUrl||""}">${schedule[s]["runs_scored"]||""}-${schedule[s]["runs_allowed"]||"0"}</a></td>
+						<td>${schedule[s]["record"]||""}</td>
 						</tr>`
 					)
 			}

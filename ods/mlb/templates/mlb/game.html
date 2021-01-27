@@ -1,86 +1,167 @@
 {% extends 'nba/base.html' %}
 {% block content %}
 <head><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script></head>
-
-<div class="d-flex justify-content-center">
-	<table id="game-details">
-		<thead>
-			<tr>
-				<th><h3>AWAY</h3></th>
-				<th><h3>HOME</h3></th>
-			</tr>
-			<tr>
-				<td id="away-name"></td>
-				<td id="home-name"></td>
-			</tr>
-			<tr>
-				<td id="away-score"></td>
-				<td id="home-score"></td>				
-			</tr>
-			<tr>
-				<td id="game-date"></td>
-				<td id="game-time"></td>
-			</tr>
-
-			<tr>
-				<td id="odds"></td>
-				<td id="total"></td>
-			</tr>
-
-		</thead>
-	</table>
-	<table id="away-stats">
-		<tbody>
-			
-		</tbody>
-	</table>
-
-</div>
-<div class="row">
-	<div class="col-sm-6">
-		<div class="table-responsive">
-			<table class="table table-sm table-hover" id="away-players-table">
-				<thead>
-					<tr>
-						<th>NAME</th>
-						<th>MINUTES</th>
-						<th>POINTS</th>
-						<th>REBOUNDS</th>
-						<th>ASSISTS</th>
-					</tr>
-				</thead>
-				<tbody></tbody>
-			</table>
+<div class="container-fluid">
+<div class="jumbotron">
+	<div class="d-flex flex-row justify-content-around">
+		<div class="p-2">
+			<div class="d-flex flex-row justify-content-center">
+				<a id="scoreboard-road-team-url"><img id="scoreboard-road-logo" src=""></a>
+			</div>
+			<div class="d-flex flex-row justify-content-center">
+				<p id="scoreboard-away-record"></p>
+			</div>
 		</div>
+		<div class="p-2">
+			<div class="d-flex flex-row justify-content-center">
+				<p id="scoreboard-road-tm"></p>
+			</div>
+
+			<div class="d-flex flex-row justify-content-center">
+				<p id="scoreboard-road-points"></p>
+			</div>
+		</div>
+		<div class="p-2">
+			<div class="d-flex flex-row">
+				<span id="scoreboard-game-date"></span>
+			</div>
+			<div class="d-flex flex-row">
+				<span id="scoreboard-game-time"></span>
+			</div>
+			<div class="d-flex flex-row">
+				<span id="scoreboard-game-winner"></span>
+			</div>
+			<div class="d-flex flex-row">
+				<span id="scoreboard-game-loser"></span>
+			</div>
+			<div class="d-flex flex-row">
+				<span id="scoreboard-game-save"></span>
+			</div>
+			<div class="d-flex flex-row">
+				<span id="scoreboard-game-odds"></span>
+			</div>
+		</div>
+		<div class="p-2">
+			<div class="d-flex flex-row justify-content-center">
+				<p id="scoreboard-home-tm"></p>
+			</div>
+
+			<div class="d-flex flex-row justify-content-center">
+				<p id="scoreboard-home-points"></p>
+			</div>
+		</div>
+	    <div class="p-2">
+			<div class="d-flex flex-row justify-content-center">
+				<a id="scoreboard-home-team-url"><img id="scoreboard-home-logo" src=""></a>
+			</div>
+			<div class="d-flex flex-row justify-content-center">
+				<p id="scoreboard-home-record"></p>
+			</div>
+		</div>
+
 	</div>
-	<div class="col-sm-6">
-		<div class="table-responsive">
-			<table class="table table-sm table-hover" id="home-players-table">
-				<thead>
-					<tr>
-						<th>NAME</th>
-						<th>MINUTES</th>
-						<th>POINTS</th>
-						<th>REBOUNDS</th>
-						<th>ASSISTS</th>
-					</tr>
-				</thead>
-				<tbody></tbody>
-			</table>
-		</div>
 </div>
 
+
+
+	<div class="d-flex justify-content-center">
+
+		<table id="away-stats">
+			<tbody>
+				
+			</tbody>
+		</table>
+
+	</div>
+		
+		<div class="card">
+			<div class="card-body">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="table-responsive">
+							<table class="table table-sm table-hover" id="away-players-table">
+								<thead>
+									<tr>
+										<th>NAME</th>
+										<th>H</th>
+										<th>AB</th>
+										<th>RBI</th>
+										<th>R</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+						<div class="table-responsive">
+							<table class="table table-sm table-hover" id="away-pitchers-table">
+								<thead>
+									<tr>
+										<th>NAME</th>
+										<th>IP</th>
+										<th>H</th>
+										<th>R/ER</th>
+										<th>BB</th>
+										<th>K</th>
+									</tr>
+								</thead>
+								<tbody>
+									
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="table-responsive">
+							<table class="table table-sm table-hover" id="home-players-table">
+								<thead>
+									<tr>
+										<th>NAME</th>
+										<th>H</th>
+										<th>AB</th>
+										<th>RBI</th>
+										<th>R</th>
+									</tr>
+								</thead>
+								<tbody></tbody>
+							</table>
+						</div>
+						<div class="table-responsive">
+							<table class="table table-sm table-hover " id="home-pitchers-table">
+								<thead>
+									<tr>
+										<th>NAME</th>
+										<th>IP</th>
+										<th>H</th>
+										<th>R/ER</th>
+										<th>BB</th>
+										<th>K</th>
+									</tr>
+								</thead>
+								<tbody>
+									
+								</tbody>
+							</table>
+						</div>
+				</div>
+				</div>
+			</div>
+		</div>
+</div>
 <script type="text/javascript">
 	function writeGame(){
 		let boxscoreIndex = "{{boxscore_index}}";
 		let year = "{{year}}";
-		let gameUrl = "{% url 'mlb:game_feed' year=2011 boxscore_index='201411170LAC' %}".replace(/2011/,year.toString()).replace('201411170LAC',boxscoreIndex.toString());
+		let teamId = "{{team_id}}"
+		let gameUrl = "{% url 'mlb:game_feed' year=2011 team_abbr='LAC' boxscore_index='201411170LAC' %}".replace(/2011/,year.toString()).replace('201411170LAC',boxscoreIndex.toString()).replace('LAC',teamId.toString());
 		fetch(gameUrl).then(function(response){
 			return(response.json());
 		}).then(function(data){
 			let info = data;
-			let boxscore = JSON.parse(data["boxscore"]);
+			let gameOdds = data["odds"];			
+			let boxscore = JSON.parse(data["boxscore"])[0];
 			let gameInfo = JSON.parse(data["info"]);
+			let awayTeamData = data["road_tm"];
+			let homeTeamData = data["home_tm"];
 			let homeGm = data["home_gm"];
 			console.log(homeGm);
 			let roadGm = data["road_gm"];
@@ -90,40 +171,83 @@
 			let homeTeam = gameInfo["_home_name"];
 			let awayTm = homeGm["_opponent_name"];
 			let homeTm = roadGm["_opponent_name"];
-			$("#away-name").prepend(`<h5>${gameInfo["_away_name"]||homeGm["_opponent_name"]||""}</h5>`);
-			$("#home-name").prepend(`<h5>${gameInfo["_home_name"]||roadGm["_opponent_name"]||""}</h5>`);
-			$("#away-score").prepend(`${gameInfo["_away_points"]||""}`);
-			$("#home-score").prepend(`${gameInfo["_home_points"]||""}`);
-			$("#game-date").prepend(`${homeGm["_date"]||roadGm["_date"]||""}`);
-			$("#game-time").prepend(`${homeGm["_time"]||roadGm["_time"]||""}`);	
-			let gameOdds = data["odds"];
-			console.log(gameOdds);
-			findGameOdds(gameOdds,awayTm,homeTm);
+			let roadTmUrl = "{% url 'nba:team' year=2021 team_id='CHI' %}".replace(/2021/,year.toString()).replace('CHI',homeGm["_opponent_abbr"].toString());
+			let homeTmUrl = "{% url 'nba:team' year=2021 team_id='CHI' %}".replace(/2021/,year.toString()).replace('CHI',roadGm["_opponent_abbr"].toString());
+			
+			let roadLogoImageSource = "https://d2p3bygnnzw9w3.cloudfront.net/req/202101211/tlogo/br/" + homeGm["_opponent_abbr"] + ".png";
+			let homeLogoImageSource = "https://d2p3bygnnzw9w3.cloudfront.net/req/202101211/tlogo/br/" + roadGm["_opponent_abbr"] + ".png";
+			
+			$("#away-name").prepend(`<h2>${gameInfo["_away_name"]||homeGm["_opponent_name"]||""}</h2>`);
+			$("#home-name").prepend(`<h2>${gameInfo["_home_name"]||roadGm["_opponent_name"]||""}</h2>`);
+			$("#scoreboard-home-tm").prepend(`<h2>${gameInfo["_home_name"]||roadGm["_opponent_name"]||""}</h2>`);
+			$("#scoreboard-road-tm").prepend(`<h2>${gameInfo["_away_name"]||roadGm["_opponent_name"]||""}</h2>`);
+			$("#scoreboard-road-logo").attr("src", roadLogoImageSource);
+			$("#scoreboard-road-team-url").attr("href", roadTmUrl);
+			$("#scoreboard-home-team-url").attr("href", homeTmUrl);
+			$("#scoreboard-home-logo").attr("src", homeLogoImageSource);
+			$("#away-score").prepend(`${homeGm["_points_allowed"]||""}`);
+			$("#scoreboard-road-points").prepend(`<h3>${homeGm["_runs_allowed"]||""}</h3>`);
+			$("#home-score").prepend(`${homeGm["_points_scored"]||""}`);
+			$("#scoreboard-home-points").prepend(`<h3>${homeGm["_runs_scored"]||""}</h3>`);
+			$("#scoreboard-game-date").prepend(`${homeGm["_date"]||roadGm["_date"]||""}  ${homeGm["_time"]||roadGm["_time"]||""}`);
+			$("#scoreboard-game-time").prepend(`${homeGm["_time"]||roadGm["_time"]||""}`);	
+			$("#scoreboard-away-record").prepend(`${roadGm["_record"]||""}`)		
+			$("#scoreboard-home-record").prepend(`${homeGm["_record"]||""}`);
+			$("#scoreboard-game-winner").prepend(`<strong>WIN:</strong>${homeGm["_winner"]||""}`);
+			$("#scoreboard-game-loser").prepend(`<strong>LOSS:</strong>${homeGm["_loser"]||""}`);
+			$("#scoreboard-game-winner").prepend(`<strong>SAVE:</strong>${homeGm["_save"]||""}`);
+			findGameOdds(gameOdds,awayTeamData["_name"],homeTeamData["_name"]);
 			var a;
 			for(a=0;a<away_players.length;a++){
-				console.log(away_players[a]);
-				$("#away-players-table tbody").append(
-					`<tr>
-						<td>${away_players[a]["_name"]||"no name"}</td>
-						<td>${away_players[a]["_minutes_played"]||"0"}</td>
-						<td>${away_players[a]["_points"]||"0"}</td>
-						<td>${away_players[a]["_total_rebounds"]||"0"}</td>
-						<td>${away_players[a]["_assists"]||"0"}</td>
-					`
-					)
+				if(away_players[a]["_batters_faced"][0]===null){;
+					$("#away-players-table tbody").append(
+						`<tr>
+							<td>${away_players[a]["_name"]||"no name"}</td>
+							<td>${away_players[a]["_hits"]||"0"}</td>
+							<td>${away_players[a]["_at_bats"]||"0"}</td>
+							<td>${away_players[a]["_runs_batted_in"]||"0"}</td>
+							<td>${away_players[a]["_runs"]||"0"}</td>
+						`
+						)
+				} else if(away_players[a]["_batters_faced"] !== null){
+					console.log(away_players[a]);
+					$("#away-pitchers-table tbody").append(
+						`<tr>
+							<td>${away_players[a]["_name"]||"no name"}</td>
+							<td>${away_players[a]["_innings_pitched"]||"0"}</td>
+							<td>${away_players[a]["_hits_allowed"][0][1]||"0"}</td>
+							<td>${away_players[a]["_runs_allowed"][0][1]||"0"}/${away_players[a]["_earned_runs_allowed"]||"0"}</td>
+							<td>${away_players[a]["_bases_on_balls_given"][0][1]||"0"}</td>
+							<td>${away_players[a]["_strikeouts"][0][1]||"0"}</td>
+						`
+						)
+				}
 			}
 			var h;
 			for(h=0;h<home_players.length;h++){
-				console.log(home_players[h]);
+				if(home_players[h]["_batters_faced"][0]===null){
 				$("#home-players-table tbody").append(
 					`<tr>
 						<td>${home_players[h]["_name"]||"no name"}</td>
-						<td>${home_players[h]["_minutes_played"]||"0"}</td>
-						<td>${home_players[h]["_points"]||"0"}</td>
-						<td>${home_players[h]["_total_rebounds"]||"0"}</td>
-						<td>${home_players[h]["_assists"]||"0"}</td>
+						<td>${home_players[h]["_hits"]||"0"}</td>
+						<td>${home_players[h]["_at_bats"]||"0"}</td>
+						<td>${home_players[h]["_runs_batted_in"]||"0"}</td>
+						<td>${home_players[h]["_runs"]||"0"}</td>
 					`
 					)
+			} else if(home_players[h]["_batters_faced"] !== null){
+					console.log(home_players[h]);
+					$("#home-pitchers-table tbody").append(
+						`<tr>
+							<td>${home_players[h]["_name"]||"no name"}</td>
+							<td>${home_players[h]["_innings_pitched"]||"0"}</td>
+							<td>${home_players[h]["_hits_allowed"][0][1]||"0"}</td>
+							<td>${home_players[h]["_runs_allowed"][0][1]||"0"}/${home_players[h]["_earned_runs_allowed"]||"0"}</td>
+							<td>${home_players[h]["_bases_on_balls_given"][0][1]||"0"}</td>
+							<td>${home_players[h]["_strikeouts"][0][1]||"0"}</td>
+						`
+						)
+				}
 			}
 
 		});
@@ -132,20 +256,24 @@
 
 	}
 	function findGameOdds(odds,awayTeam,homeTeam){
-
+		console.log(awayTeam);
 		for(var x of Object.keys(odds)){
+			console.log(odds[x]["away_team"]);
 			if(odds[x]["away_team"].includes(awayTeam)||odds[x]["home_team"].includes(homeTeam)){				
 				var thisGameOdds = odds[x]["odds"];
-				console.log('this game Odds');
-				console.log(thisGameOdds);
-				var thisGameTotal = odds[x]["total"];
-				$("#odds").prepend(`<h5>${thisGameOdds}</h5>`);
-				$("#total").prepend(`<h5>${thisGameTotal}</h5>`);
+				var time = new Date(odds[x]["datetime"]).toLocaleTimeString();
+				var datetime = new Date(odds[x]["datetime"]);	
+				console.log(time);
+					
+				$("#scoreboard-game-odds").append(`<strong>MONEY LINE:</strong>${thisGameOdds}`);
+				$("#scoreboard-game-time").append(`${time||""}`);
+				
 			}
 		}
 		
 	}
 	document.addEventListener('DOMContentLoaded', writeGame);
 </script>
+
 
 {% endblock %}
