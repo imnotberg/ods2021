@@ -48,7 +48,28 @@ def team(request,team_id,year=datetime.now()):
 	context = {'year':year,'team_id':team_id,}
 	
 	return render(request,'nba/team.html',context)
+def game_odds(request,year,boxscore_index):
+	date = datetime.strptime(boxscore_index[0:8],"%Y%m%d").strftime("%Y-%m-%d")
+	url = f"https://www.covers.com/sports/nba/matchups?selectedDate={date}"
+	page = requests.get(url)
+	tree = html.fromstring(page.text)
+	odds_dict = {g.xpath('./@data-event-id')[0]:{"away_team":f"{g.xpath('./@data-away-team-fullname-search')[0]} {g.xpath('./@data-away-team-nickname-search')[0]}" ,"home_team":f"{g.xpath('./@data-home-team-fullname-search')[0]} {g.xpath('./@data-home-team-nickname-search')[0]}","odds":g.xpath('./@data-game-odd')[0],"total":g.xpath('./@data-game-total')[0],} for g in tree.xpath('//div[@class="cmg_matchup_game_box cmg_game_data"]')} 
+	return JsonResponse(odds_dict,safe=False)
 
+def game_boxscore(request,year,boxscore_index):
+	try:
+		boxscore = Boxscore(boxscore_index).dataframe.to_json(orient="records")
+		away_players = pd.concat([df.from_dict(p.__dict__,orient="index").T for p in game.away_players]).to_json(orient="records")
+		home_players = pd.concat([df.from_dict(p.__dict__,orient="index").T for p in game.home_players]).to_json(orient="records")
+	except:
+		boxscore = None
+		away_players = None
+		home_players = None
+
+	return JsonResponse({"boxscore":boxscore,"away_players":away_players,"home_players":home_players},safe=False)
+def test_game(request,year,boxscore_index):
+	context = {"year":year,"boxscore_index":boxscore_index,}
+	return render(request,'nba/test.html',context)
 def game_feed(request,year,boxscore_index):
 	teams = Teams(year)
 	home_abbr = re.findall('([A-Z]+)',boxscore_index)[0]		

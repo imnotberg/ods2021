@@ -14,5 +14,6 @@ urlpatterns = [
 	path('game/year/<year>/boxscore-index/<team_id>/<boxscore_index>',views.game,name='game'),
 	path('date-feed/date/<date_id>',views.date_feed,name='date_feed'),
 	path('schedule/date/<date_id>',views.schedule_day,name='schedule'),
+	
 
 ]

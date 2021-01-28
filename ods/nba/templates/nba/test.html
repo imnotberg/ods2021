@@ -1,0 +1,16 @@
+{% extends 'nba/base.html' %}
+<head><script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script></head>
+{% block content %}
+<script type="text/javascript">
+	function getData(){
+		let boxscoreIndex = "{{boxscore_index}}"
+		let year = "{{year}}"
+		Promise.all([
+  fetch("{% url 'nba:game_odds' year=2021 boxscore_index='202101250BRK' %}".replace(/2021/,year.toString()).replace('202101250BRK',boxscoreIndex.toString())).then(resp => resp.json()),
+  fetch("{% url 'nba:game_boxscore' year=2021 boxscore_index='202101250BRK' %}".replace(/2021/,year.toString()).replace('202101250BRK',boxscoreIndex.toString())).then(resp => resp.json()),
+  
+]).then(console.log)
+	}
+	document.addEventListener('DOMContentLoaded', getData);
+</script>
+{% endblock %}

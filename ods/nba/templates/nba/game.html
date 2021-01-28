@@ -73,6 +73,9 @@
 								<th id="stats-table-home-abbrev"></th>
 							</tr>
 						</thead>
+						<tbody>
+							
+						</tbody>
 					</table>
 				</div>
 			</div>
@@ -93,7 +96,6 @@
 
 	}
 	function writeScoreboard(data){
-		console.log(data);
 		let year = "{{year}}"
 		let homeGame = data["home_gm"];
 		let roadGame = data["road_gm"];
@@ -121,7 +123,9 @@
 		$("#scoreboard-home-record").prepend(`${homeGame["_wins"]||homeRecord[homeRecord.length-1]["wins"]||'0'}-${homeGame["_losses"]||homeRecord[homeRecord.length-1]["wins"]||'0'}`);
 		findGameOdds(data["odds"],roadTeam["_name"],homeTeam["_name"]);
 		$("#stats-table-road-abbrev").prepend(`${roadTeam["_abbreviation"]||""}`);	
-		$("#stats-table-home-abbrev").prepend(`${homeTeam["_abbreviation"]||""}`);	
+		$("#stats-table-home-abbrev").prepend(`${homeTeam["_abbreviation"]||""}`);
+		let boxscore = JSON.parse(data["boxscore"])[0];
+		console.log(boxscore);	
 	}
 	function findGameOdds(odds,awayTeam,homeTeam){		
 		for(var x of Object.keys(odds)){
