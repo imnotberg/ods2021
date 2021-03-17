@@ -52,7 +52,7 @@
 						<td><a href="${gameUrl||""}">${schedule[s]["date"]||""}</td>
 						<td><a href="${oppUrl||""}">${schedule[s]["opponent_abbr"]||""}</a></td>
 						<td><a href="${gameUrl||""}">${schedule[s]["points_scored"]||""}-${schedule[s]["points_allowed"]||""}</a></td>
-						<td>${schedule[s]["wins"]||""}-${schedule[s]["losses"]||""}</td>
+						<td>${schedule[s]["wins"]||""}-${schedule[s]["losses"]||"0"}</td>
 						</tr>`
 					)
 			}
@@ -60,5 +60,8 @@
 
 
 	}
-	document.addEventListener('onload', writeTeam);
+	function sayHi(){
+		console.log('hi');
+	}
+document.addEventListener('DOMContentLoaded', writeTeam);
 </script>

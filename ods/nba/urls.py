@@ -17,4 +17,5 @@ urlpatterns = [
 	path('test/game/year/<year>/boxscore-index/<boxscore_index>',views.test_game,name='test_game'),
 	path('game-odds/year/<year>/boxscore-index/<boxscore_index>',views.game_odds,name="game_odds"),
 	path('game-boxscore/year/<year>/boxscore-index/<boxscore_index>',views.game_boxscore,name="game_boxscore"),
+	path('game-teams/year/<year>/boxscore-index/<boxscore_index>',views.game_teams,name="game_teams"),
 ]

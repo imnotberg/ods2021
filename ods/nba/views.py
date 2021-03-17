@@ -1,8 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-from sportsreference.nba.teams import Teams
-from sportsreference.nba.schedule import Schedule 
-from sportsreference.nba.boxscore import Boxscore
+from sportsipy.nba.teams import Teams
+from sportsipy.nba.schedule import Schedule 
+from sportsipy.nba.boxscore import Boxscore
 import pandas as pd
 from pandas import DataFrame as df
 import json,requests,re
@@ -67,6 +67,18 @@ def game_boxscore(request,year,boxscore_index):
 		home_players = None
 
 	return JsonResponse({"boxscore":boxscore,"away_players":away_players,"home_players":home_players},safe=False)
+def game_teams(request,year,boxscore_index):
+	teams = Teams(year)
+	home_abbr = re.findall('([A-Z]+)',boxscore_index)[0]
+	home_team = teams[home_abbr]
+	home_game = [t for t in home_team.schedule if t.boxscore_index==boxscore_index][0]	
+	road_team = teams[home_game.opponent_abbr]
+	road_game = [t for t in road_team.schedule if t.boxscore_index==boxscore_index][0]
+	road_sched = road_team.schedule.dataframe.to_dict(orient="records")
+	home_sched = home_team.schedule.dataframe.to_dict(orient="records")
+
+	return JsonResponse({"road_team":road_team.__dict__,"home_team":home_team.__dict__,"road_sched":road_sched,"home_sched":home_sched,	"home_game":home_game.__dict__,},safe=False)
+
 def test_game(request,year,boxscore_index):
 	context = {"year":year,"boxscore_index":boxscore_index,}
 	return render(request,'nba/test.html',context)
