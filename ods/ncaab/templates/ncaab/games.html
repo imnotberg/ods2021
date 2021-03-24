@@ -1,0 +1,64 @@
+{% extends 'ncaab\base.html' %}
+{% block content %}
+<style type="text/css">
+	
+</style>
+<div class="container-fluid">
+	<div class="card">
+		<div class="card-body">
+			<div class="card-title">todays games</div>
+			<div class="table-responsive">
+				<table class="table table-sm table-striped table-bordered table-hover" id="games-table">
+					<thead>
+						<tr>
+							<th>Game</th>
+							<th>Time</th>
+							<th>Away Team</th>
+							<th>Away Score</th>
+							<th>Odds</th>
+							<th>Total</th>
+							<th>Home Score</th>
+							<th>Home Team</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+					<tfoot></tfoot>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function(){
+		var date = "{{date}}";
+		Promise.all([
+			//list of feeds
+				fetch("{% url 'ncaab:games_feed' '000000' %}".replace('000000',date.toString()),{})
+			]).then(function(responses){
+				return Promise.all(responses.map(function(response){
+					return response.json();
+				})).then(function(data){
+					var gameInfo = data[0];
+					console.log(gameInfo);	
+					var gamesTable = $('#games-table').DataTable({
+						data:gameInfo["info"],
+						//dom:"Blftrip",
+						pageLength:100,
+						columns:[
+							{"data":null,"defaultContent":""},
+							{"data":"datetime"},
+							{"data":"away_team"},
+							{"data":"away_score"},
+							{"data":"odds"},
+							{"data":"total"},
+							{"data":"home_score"},
+							{"data":"home_team"},
+						]
+					})
+				//data will be in order of the list [x]
+			})
+		})
+	})
+</script>
+{% endblock %}
+

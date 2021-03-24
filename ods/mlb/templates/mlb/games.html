@@ -1,0 +1,285 @@
+{% extends 'mlb/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+	<div class="d-flex flex-row">
+		<div class="p-2 flex-fill">
+			<div class="card">
+				<div class="card-body">
+					<div class="card-title" id="games-date">todays games {{date_input}}</div>
+					<div class="table-responsive">
+						<table class="table table-sm table-bordered table-striped table-hover" id="games-table">
+							<thead>
+								<tr>
+									<th>Game</th>
+									<th>Time</th>
+									<th>Away</th>
+									<th>Away Score</th>
+									<th>Odds</th>
+									<th>Home Score</th>
+									<th>Home Team</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function(){
+		var dateInput = "{{date_input}}"
+		fetch("{% url 'mlb:games_feed' 'XXXXXXX' %}".replace('XXXXXXX',dateInput.toString()),{
+		}).then(function(response){
+			return response.json();
+		}).then(function(data){
+			var gameData = data;
+			console.log(gameData["info"]);
+			console.log(gameData["games"]);
+			var gamesTable = $('#games-table').DataTable({
+				"destroy":true,
+				dom:"Bfrtip",
+				data: gameData["games"],
+				columns:[
+					{"data":"boxscore"},
+					{"data":"home_abbr","defaultContent":"xxx","render":function(data,type,row,meta){
+						var infoRow = gameData["info"].filter(function(r){
+							return r.home_abbreviation==data;
+						
+						});
+						try{
+						return infoRow[0]["datetime"];
+						}
+						catch(error){return '';}						
+					}},
+					{"data":"away_name"},
+					{"data":"away_score"},
+					{"data":"home_abbr","defaultContent":"xxx","render":function(data,type,row,meta){
+						var infoRow = gameData["info"].filter(function(r){
+							return r.home_abbreviation==data;
+						
+						});
+						try{
+						return infoRow[0]["odds"];
+						}
+						catch(error){return '';}						
+					}},
+					{"data":"home_score"},
+					{"data":"home_name"}					
+
+				],
+				columnDefs:[
+						{
+							targets:0,
+							searchable:false,
+							"render":function(data,type,row,meta){
+							var infoRow = gameData["info"].filter(function(r){
+								return r.home_abbreviation==row['home_abbr'];});
+							console.log(infoRow);
+								try{
+									gameUrl = "{% url 'mlb:game' placeholder='EEEEEE' boxscore_index='AAAAAA' away_abbreviation='BBBBBB' home_abbreviation='CCCCCC' date_input='DDDDDD' %}".replace('AAAAAA',data.toString().substring(4,)||"").replace('BBBBBB',infoRow[0]["away_abbreviation"].toString()).replace('CCCCCC',infoRow[0]["home_abbreviation"].toString()).replace('DDDDDD',dateInput.toString()).replace('EEEEEE',data.toString().substring(0,3));
+									}
+								catch(error){
+									gameUrl = '';
+								}
+
+								return `<a href="`+gameUrl+`">`+data+`</a>`;
+							}
+						}
+				],
+				buttons: [
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5',
+            {"text":"Previous Day","action":function(e,dt,node,config){
+            	previousDay(dateInput);
+            }},
+            {"text":"Next Day","action":function(e,dt,node,config){
+            	nextDay(dateInput);
+            }}
+        ]
+			})
+		})
+	})
+</script>
+<script type="text/javascript">
+	function previousDay(dateString){
+		var previousDate = new Date(dateString);
+		previousDate.setDate(previousDate.getDate()-1);
+		var year = previousDate.getFullYear();
+		var month = previousDate.getMonth() + 1;
+		var date = previousDate.getDate()+1;
+		if(month<10){
+			month = '0'+month;
+		}
+		if(date<10){
+			date = '0'+date;
+		}
+		var previousDateString = year.toString()+'-'+month+'-'+date;
+		$('#games-date').text('GAMES: '+previousDateString)
+		fetch("{% url 'mlb:games_feed' 'XXXXXXX' %}".replace('XXXXXXX',previousDateString.toString()),{
+		}).then(function(response){
+			return response.json();
+		}).then(function(data){
+			var gameData = data;
+			console.log(gameData["info"]);
+			console.log(gameData["games"]);
+			var gamesTable = $('#games-table').DataTable({
+				"destroy":true,
+				dom:"Bfrtip",
+				data: gameData["games"],
+				columns:[
+					{"data":"boxscore"},
+					{"data":"home_abbr","defaultContent":"xxx","render":function(data,type,row,meta){
+						var infoRow = gameData["info"].filter(function(r){
+							return r.home_abbreviation==data;
+						
+						});
+						try{
+						return infoRow[0]["datetime"];
+						}
+						catch(error){return '';}						
+					}},
+					{"data":"away_name"},
+					{"data":"away_score"},
+					{"data":"home_abbr","defaultContent":"xxx","render":function(data,type,row,meta){
+						var infoRow = gameData["info"].filter(function(r){
+							return r.home_abbreviation==data;
+						
+						});
+						try{
+						return infoRow[0]["odds"];
+						}
+						catch(error){return '';}						
+					}},
+					{"data":"home_score"},
+					{"data":"home_name"}					
+
+				],
+				columnDefs:[
+						{
+							targets:0,
+							searchable:false,
+							"render":function(data,type,row,meta){
+							var infoRow = gameData["info"].filter(function(r){
+								return r.home_abbreviation==row['home_abbr'];});
+							console.log(infoRow);
+								try{
+									gameUrl = "{% url 'mlb:game' placeholder='EEEEEE' boxscore_index='AAAAAA' away_abbreviation='BBBBBB' home_abbreviation='CCCCCC' date_input='DDDDDD' %}".replace('AAAAAA',data.toString().substring(4,)||"").replace('BBBBBB',infoRow[0]["away_abbreviation"].toString()).replace('CCCCCC',infoRow[0]["home_abbreviation"].toString()).replace('DDDDDD',previousDateString.toString()).replace('EEEEEE',data.toString().substring(0,3));
+									}
+								catch(error){
+									gameUrl = '';
+								}
+
+								return `<a href="`+gameUrl+`">`+data+`</a>`;
+							}
+						}
+				],
+				buttons: [
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5',
+            {"text":"Previous Day","action":function(e,dt,node,config){
+            	previousDay(previousDateString);
+            }},
+            {"text":"Next Day","action":function(e,dt,node,config){
+            	nextDay(previousDateString);
+            }}
+        ]
+			})
+		})
+	}
+</script>
+<script type="text/javascript">
+	function nextDay(dateString){
+		var nextDate = new Date(dateString);
+		nextDate.setDate(nextDate.getDate()+1);
+		var year = nextDate.getFullYear();
+		var month = nextDate.getMonth() + 1;
+		var date = nextDate.getDate()+1;
+		if(month<10){
+			month = '0'+month;
+		}
+		if(date<10){
+			date = '0'+date;
+		}
+		var nextDateString = year.toString()+'-'+month+'-'+date;
+		$('#games-date').text('GAMES: '+nextDateString);
+		fetch("{% url 'mlb:games_feed' 'XXXXXXX' %}".replace('XXXXXXX',nextDateString.toString()),{
+		}).then(function(response){
+			return response.json();
+		}).then(function(data){
+			var gameData = data;
+			console.log(gameData["info"]);
+			console.log(gameData["games"]);
+			var gamesTable = $('#games-table').DataTable({
+				"destroy":true,
+				dom:"Bfrtip",
+				data: gameData["games"],
+				columns:[
+					{"data":"boxscore"},
+					{"data":"home_abbr","defaultContent":"xxx","render":function(data,type,row,meta){
+						var infoRow = gameData["info"].filter(function(r){
+							return r.home_abbreviation==data;
+						
+						});
+						try{
+						return infoRow[0]["datetime"];
+						}
+						catch(error){return '';}						
+					}},
+					{"data":"away_name"},
+					{"data":"away_score"},
+					{"data":"home_abbr","defaultContent":"xxx","render":function(data,type,row,meta){
+						var infoRow = gameData["info"].filter(function(r){
+							return r.home_abbreviation==data;
+						
+						});
+						try{
+						return infoRow[0]["odds"];
+						}
+						catch(error){return '';}						
+					}},
+					{"data":"home_score"},
+					{"data":"home_name"}					
+
+				],
+				columnDefs:[
+						{
+							targets:0,
+							searchable:false,
+							"render":function(data,type,row,meta){
+							var infoRow = gameData["info"].filter(function(r){
+								return r.home_abbreviation==row['home_abbr'];});
+							console.log(infoRow);
+								try{
+									gameUrl = "{% url 'mlb:game' placeholder='EEEEEE' boxscore_index='AAAAAA' away_abbreviation='BBBBBB' home_abbreviation='CCCCCC' date_input='DDDDDD' %}".replace('AAAAAA',data.toString().substring(4,)||"").replace('BBBBBB',infoRow[0]["away_abbreviation"].toString()).replace('CCCCCC',infoRow[0]["home_abbreviation"].toString()).replace('DDDDDD',nextDateString.toString()).replace('EEEEEE',placeholder.toString());
+									}
+								catch(error){
+									gameUrl = '';
+								}
+
+								return `<a href="`+gameUrl+`">`+data+`</a>`;
+							}
+						}
+				],
+				buttons: [
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5',
+            {"text":"Previous Day","action":function(e,dt,node,config){
+            	previousDay(nextDateString);
+            }},
+            {"text":"Next Day","action":function(e,dt,node,config){
+            	nextDay(nextDateString);
+            }}
+        ]
+			})
+		})
+	}
+</script>
+{% endblock %}
