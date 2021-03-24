@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'ncaab\base.html' %}
 {% block content %}
 <style type="text/css">
@@ -23,6 +24,30 @@
 					</thead>
 					<tbody></tbody>
 					<tfoot></tfoot>
+=======
+{% extends 'ncaab/base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+	<div class="card">
+		<div class="card-body">
+			<div class="card-title">today's games</div>
+			<div class="table-responsive">
+				<table class="table table-sm table-bordered table-striped table-hover" id="games-table">
+					<thead>
+						<tr>
+							<th>GAME</th>
+							<th>TIME</th>
+							<th>AWAY TEAM</th>
+							<th>AWAY SCORE</th>
+							<th>LINE</th>
+							<th>TOTAL</th>
+							<th>HOME SCORE</th>
+							<th>HOME TEAM</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+>>>>>>> 73a6c298e1a58d8476fcc6951515cc23eefe6407
 				</table>
 			</div>
 		</div>
@@ -30,14 +55,22 @@
 </div>
 <script type="text/javascript">
 	$(document).ready(function(){
+<<<<<<< HEAD
 		var date = "{{date}}";
 		Promise.all([
 			//list of feeds
 				fetch("{% url 'ncaab:games_feed' '000000' %}".replace('000000',date.toString()),{})
+=======
+		var dateInput = "{{date_input}}";
+		Promise.all([
+			fetch("{% url 'ncaab:games_feed' 123456789 %}".replace(/123456789/,dateInput.toString()),{}),
+			
+>>>>>>> 73a6c298e1a58d8476fcc6951515cc23eefe6407
 			]).then(function(responses){
 				return Promise.all(responses.map(function(response){
 					return response.json();
 				})).then(function(data){
+<<<<<<< HEAD
 					var gameInfo = data[0];
 					console.log(gameInfo);	
 					var gamesTable = $('#games-table').DataTable({
@@ -48,10 +81,27 @@
 							{"data":null,"defaultContent":""},
 							{"data":"datetime"},
 							{"data":"away_team"},
+=======
+					var loadData = data;
+					return loadData;
+				}).then(function(data){
+					var srGames = data[0]["games"];
+					var info = data[0]["info"];
+					console.log(info);
+					var gamesTable = $('#games-table').DataTable({
+						data:info,
+						dom:"Blftrip",
+						pageLength:100,
+						columns:[
+							{'data':null,defaultContent:"link to boxscore"},
+							{'data':"datetime"},
+							{'data':"away_team"},
+>>>>>>> 73a6c298e1a58d8476fcc6951515cc23eefe6407
 							{"data":"away_score"},
 							{"data":"odds"},
 							{"data":"total"},
 							{"data":"home_score"},
+<<<<<<< HEAD
 							{"data":"home_team"},
 						]
 					})
@@ -62,3 +112,19 @@
 </script>
 {% endblock %}
 
+=======
+							{"data":"home_team"}
+						],
+						buttons:[
+							{'text':"Submit Games"},
+							{'text':"next day"},
+							{"extend":"pdfHtml5","orientation":"landscape","title":"print picks"},
+						]
+
+					})
+				})
+			})			
+		})
+</script>
+{% endblock %}
+>>>>>>> 73a6c298e1a58d8476fcc6951515cc23eefe6407

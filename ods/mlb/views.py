@@ -1,8 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-from sportsreference.mlb.teams import Teams
-from sportsreference.mlb.schedule import Schedule 
-from sportsreference.mlb.boxscore import Boxscore
+from sportsipy.mlb.teams import Teams
+from sportsipy.mlb.schedule import Schedule 
+from sportsipy.mlb.boxscore import Boxscore
 import pandas as pd
 from pandas import DataFrame as df
 import json,requests,re

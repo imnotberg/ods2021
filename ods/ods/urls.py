@@ -21,4 +21,5 @@ urlpatterns = [
     path('nba/',include('nba.urls')),
     path('nfl/',include('nfl.urls')),
     path('mlb/',include('mlb.urls')),
+    path('ncaab/',include('ncaab.urls')),
 ]
